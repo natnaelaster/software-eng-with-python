@@ -16,3 +16,16 @@ def hello(name):
 
 def goodbye(name):
     return f"Goodbye, {name}!"
+
+
+# stats.py
+VERSION = "1.11"
+
+def mean(numbers):
+    return sum(numbers) / len(numbers)
+
+def minimum(numbers):
+    return min(numbers)
+
+def maximum(numbers):
+    return max(numbers)
