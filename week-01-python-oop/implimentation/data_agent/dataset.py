@@ -1,4 +1,4 @@
-import pandas
+import pandas as pd
 import column
 from column import ColumnProfile
 
@@ -86,7 +86,7 @@ class DatasetProfile:
                 return col
         raise KeyError(f"Column {name!r} not found")
     
-'''        
+      
 # Create sample data
 df = pd.DataFrame({
     'name': ['Alice', 'Bob', None, 'David'],
@@ -108,4 +108,4 @@ col = ColumnProfile('age', 'int64', 1, 4)
 print(col)
 print(repr(col))
 print(len(profile))
-print('Alice' in profile)  '''
+print('Alice' in profile) 
