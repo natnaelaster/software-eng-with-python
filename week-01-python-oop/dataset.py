@@ -86,7 +86,17 @@ class DatasetProfile:
                 return col
         raise KeyError(f"Column {name!r} not found")
     
-      
+def run_demo():
+    #import pandas as pd
+    df = pd.DataFrame({'revenue': [100, 200, None], 'country': ['ET', 'US', 'ET']})
+    profile = DatasetProfile.from_dataframe(df)
+    profile.quality_report()                                     
+    
+if __name__ == "__main__":
+       run_demo()
+    
+    
+'''      
 # Create sample data
 df = pd.DataFrame({
     'name': ['Alice', 'Bob', None, 'David'],
@@ -108,4 +118,5 @@ col = ColumnProfile('age', 'int64', 1, 4)
 print(col)
 print(repr(col))
 print(len(profile))
-print('Alice' in profile) 
+print('Alice' in profile) '''
+

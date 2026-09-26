@@ -66,8 +66,4 @@ class CategoricalColumn(ColumnProfile):
         self.cardinality = cardinality
 
     def summary(self) -> str:
-        return f"{self.name} [{self.dtype}] — {self.null_rate:.1%} null | cardinality = {self.cardinality}"
-    
-    
-
-  
+        return f"{self.name} [{self.dtype}] — {self.null_rate:.1%} null | cardinality = {self.cardinality}"       
