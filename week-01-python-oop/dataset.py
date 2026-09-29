@@ -119,4 +119,3 @@ print(col)
 print(repr(col))
 print(len(profile))
 print('Alice' in profile) '''
-
