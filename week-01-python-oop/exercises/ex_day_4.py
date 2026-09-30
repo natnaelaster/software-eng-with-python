@@ -1,3 +1,6 @@
+# Exercise on 
+# Context Manager- The Real Reasson for (with)
+
 class Timer:
     def __init__(self, label):
         self.label = label
@@ -13,14 +16,15 @@ class Timer:
         elapsed_time = self.end_time - self.start_time
         print(f"[{self.label}] elapsed time:{elapsed_time:.6f} sec")
         return False
-    
-import time
-with Timer('loop test'):
-    total = 0
-    for i in range(1_000_000):
-        total += 1    
-        
-print('done')        
+
+if __name__ == "__main__":
+    import time
+    with Timer('loop test'):
+        total = 0
+        for i in range(1_000_000):
+            total += 1    
+            
+    print('done')        
 
 
 import os
@@ -63,3 +67,4 @@ if __name__ == "__main__":
         print(f"Caught: {e}")
 
     print(f"Exists after exception: {os.path.exists(path)}")
+    
