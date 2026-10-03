@@ -66,30 +66,6 @@ with open('profile.json', 'w') as f:
 with open('profile.json', 'r') as f:
     loaded = json.load(f)
     
-if __name__ == '__main__':
-    import dataset
-    from dataset import DatasetProfile
-    import numpy
-    
-    df = pd.DataFrame({
-    'name': ['Alice', 'Bob', None, 'David'],
-    'age': [25, 30, 22, None],
-    'score': [85.5, 92.3, 78.1, 89.7]
-    })
-    
-    profile = DatasetProfile.from_dataframe(df)
-    json.dump(profile)
-    '''
-    class AgentEncoder(json.JSONEncoder):
-        def save_profile(self, profile: DatasetProfile, path: str) -> None:
-            if isinstance(profile, np.floatiing):
-                return float(profile)
-            if isinstance(profile, np.integer):
-                return int(profile)
-            return super().save_profile(profile)
-
-        def load_profile(path: str) -> list[dict]:
-            pass'''
 
 
         

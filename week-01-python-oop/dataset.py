@@ -1,6 +1,6 @@
 import pandas as pd
 import column
-from column import ColumnProfile
+from column import ColumnProfile, NumericColumn, CategoricalColumn
 
 class DatasetProfile:
 
