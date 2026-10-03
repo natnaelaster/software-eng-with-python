@@ -93,7 +93,7 @@ def run_demo():
     profile.quality_report()                                     
     
 if __name__ == "__main__":
-       run_demo()
+    run_demo()
     
     
 '''      

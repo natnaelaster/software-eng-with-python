@@ -1,0 +1,10 @@
+{
+  "name": "sales_q4",
+  "rows": 250000,
+  "columns": 18,
+  "clean": true,
+  "null_rates": {
+    "reavenue": 0.02,
+    "country": 0.0
+  }
+}
