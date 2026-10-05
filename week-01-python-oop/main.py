@@ -31,26 +31,33 @@ print('Alice' in profile)
 
 # Serializing the profile to JSON
 class AgentEncoder(json.JSONEncoder):
-    columns = [{}]
-    def save_profile(profile: DatasetProfile, path: str) -> None:
-        if isinstance (profile, Datasetprofile):
-            data = {
-                "columns": [
-                    {
-                    "name": col.name,
-                    "dtype": col.dtype,
-                    "null_count": col.null_count,
-                    "total_count": col.total_count
-                }
-                    for col in profile.columns]
-            }
-            with open(path, 'w') as f:
-                json.dump(data, f, indent = 2, cls=AgentEncoder)
-                
-    def load_profile(path: str) -> list[dict]:
-        with open(path, 'r') as f:
-            data = json.load(f)    
-        return data
+    """Extends the default JSON encoder to handle NumPy types."""
+    def default(self, obj):
+        if isinstance(obj, np.floating):
+            return float(obj)
+        if isinstance(obj, np.integer):
+            return int(obj)
+        return super().default(obj)
+    
+def save_profile(profile: DatasetProfile, path: str) -> None:
+    """Save the columns of a DatasetProfile to a JSON file."""
+    columns = []
+    for col in profile:
+        columns.append({
+            "name": col.name,
+            "dtype": col.dtype,
+            "null_rate": float(col.null_rate),
+            "is_clean": float(col.is_clean)
+        })
+    
+    with open(path, 'w') as f:
+        json.dump(columns, f, indent=2, cls=AgentEncoder)
+            
+def load_profile(path: str) -> list[dict]:
+    """Load the list of column dicts from a JSON file."""
+    with open(path, 'r') as f:
+        return json.load(f)
+    
 
 if __name__ == "__main__":
     #from data_agent.profiler import DatasetProfile, ColumnProfile
@@ -64,3 +71,5 @@ if __name__ == "__main__":
     loaded = load_profile("profile.json")
     for col in loaded:
         print(col)
+
+
