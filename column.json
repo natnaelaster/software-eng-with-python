@@ -1,0 +1,6 @@
+{
+  "name": "revenue",
+  "dtype": "float64",
+  "null_rate": 0.0006,
+  "is_clean": true
+}

@@ -1,6 +1,9 @@
 import pandas as pd
-import column
-from column import ColumnProfile, NumericColumn, CategoricalColumn
+
+try:
+    from .column import ColumnProfile, NumericColumn, CategoricalColumn
+except ImportError:  # pragma: no cover - allows direct script execution.
+    from column import ColumnProfile, NumericColumn, CategoricalColumn
 
 class DatasetProfile:
 

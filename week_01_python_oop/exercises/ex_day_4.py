@@ -71,12 +71,10 @@ if __name__ == "__main__":
 # Exercise on 
 # JSON - javascript Object Notation
 
-import json
+import json 
 import numpy as np
-import week_01_python_oop.dataset
-import week_01_python_oop.column
-from week_01_python_oop.dataset import DatasetProfile
-from week_01_python_oop.column import ColumnProfile, CategoricalColumn, NumericColumnProfile
+from week_01_python_oop import DatasetProfile
+from week_01_python_oop import ColumnProfile, CategoricalColumn, NumericColumnProfile
 
 class AgentEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -96,12 +94,12 @@ def save_profile(profile: DatasetProfile, path: str) -> None:
             "is_clean" : col.is_clean
         })
         
-        with open(path, 'w') as f:
-            json.dump(columns, f, indent = 2, cls=AgentEncoder)
+    with open(path, 'w') as f:
+        json.dump(columns, f, indent = 2, cls=AgentEncoder)
             
-def load_profile(path) -> list[dict]:
+def load_profile(path: str) -> list[dict]:
     with open(path, 'r') as f:
-        json.load(f)
+        return json.load(f)
         
 if __name__ == "__main__":
     #from data_agent.profiler import DatasetProfile, ColumnProfile
@@ -115,6 +113,46 @@ if __name__ == "__main__":
     loaded = load_profile("profile.json")
     for col in loaded:
         print(col)
+        
 
+# Exercise 1 — Save and Load a Single Column
+# Goal: Practice the bare minimum. One column → one dict → JSON file → back.
+# Task
+# Write a file called column_io.py with two functions:
 
+class AgentEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.floating):
+            return float(obj)
+        if isinstance(obj, np.integer):
+            return int(obj)
+        return super().default(obj)
+    
+def save_column(col: ColumnProfile, path: str) -> None:
+    with open(path, 'w') as f:
+        json.dump({
+            "name" : col.name,
+            "dtype" : col.dtype,
+            "null_rate" : float(col.null_rate),
+            "is_clean" : bool(col.is_clean)
+        }, f, indent = 2, cls=AgentEncoder)
+    
+def load_column(path: str) -> ColumnProfile:
+    with open(path, 'r') as f:
+        data = json.load(f)
+    return ColumnProfile(
+        name=data["name"],
+        dtype=data["dtype"],
+        null_rate=data["null_rate"],
+        is_clean=data["is_clean"] 
+    )
 
+if __name__ == "__main__":
+    #from data_agent.profiler import ColumnProfile
+
+    col = ColumnProfile("revenue", "float64", 3, 5000)
+    save_column(col, "column.json")
+
+    loaded = load_column("column.json")
+    print(loaded)
+    print(type(loaded))

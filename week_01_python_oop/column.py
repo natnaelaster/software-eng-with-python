@@ -1,3 +1,5 @@
+import pandas as pd
+
 CLEAN_THERSHOLD = 0.05
 
 class ColumnProfile:

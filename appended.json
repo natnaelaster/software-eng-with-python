@@ -10,5 +10,11 @@
     "dtype": "float64",
     "null_rate": 0.0006,
     "is_clean": true
+  },
+  {
+    "name": "country",
+    "dtype": "object",
+    "null_rate": 0.0024,
+    "is_clean": true
   }
 ]
