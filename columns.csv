@@ -1,0 +1,3 @@
+name,dtype,null_rate,is_clean
+id,int64,0.0,True
+revenue,float64,0.0006,True

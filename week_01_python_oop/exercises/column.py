@@ -69,3 +69,12 @@ class CategoricalColumn(ColumnProfile):
 
     def summary(self) -> str:
         return f"{self.name} [{self.dtype}] — {self.null_rate:.1%} null | cardinality = {self.cardinality}"       
+    
+if __name__ == "__main__":
+    
+    columns = ColumnProfile('data', 'int64', 0, 50)
+    category = CategoricalColumn('cat', 'str', 7, 40, 4)
+    numeric = NumericColumn('num', 'float', '5', 200, 3, 5)
+    
+    print(columns.summary())
+    print(category.null_rate())
