@@ -164,7 +164,7 @@ if __name__ == "__main__":
 
 # JSON Exercise A — Nested Data (Dataset With Columns)
 # Goal: Practice serializing a nested structure — a dataset object that contains a list of column dicts.
-
+import csv
 import json
 import numpy as np
 from dataset import DatasetProfile
@@ -243,13 +243,22 @@ if __name__ == "__main__":
     print(type(loaded))
     print(type(loaded[0]))
     
-''' 
+
 # ===============================================================================#  
 
 # CSV Exercise A — Reading CSV and Computing a Total
 # Goal:Practice reading a CSV file and doing math on the values (remembering that CSV values are strings).   
 
 import csv
+
+def total_revenue(path: str):
+    total = 0.0
+    with open(path, 'r', newline="") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            total += float(row["revenue"])
+    return total
+
 if __name__ == "__main__":
     # write the CSV first
     with open("sales.csv", "w", newline="") as f:
@@ -262,15 +271,45 @@ if __name__ == "__main__":
         ])
 
     total = total_revenue("sales.csv")
-    print(f"Total revenue: {total:.2f}")
-    
-def total_revenue(path: str):
-    with open(path, 'r', newline="") as f:
-        row['revenue'] = 
+    print(f"Total revenue: {total:.2f}") ''' 
+
+# CSV Exercise B — Filtering Columns by Condition
+# Goal: Practice reading CSV and producing a filtered output. 
+# This mirrors what your agent will do — take a report and select only the interesting rows.
+
+import csv
         
-
+def load_clean_columns(path: str) -> list[dict]:
+    with open(path, 'r', newline="") as f:
+        reader = csv.DictReader(f)
+        return [row for row in reader if row["is_clean"] == "True"]
+            
+if __name__ == "__main__":
+    from column import ColumnProfile
     
+    def save_report(columns: list[ColumnProfile], path: str)  -> None:
+        with open(path, 'w', newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=['name', 'dtype', 'null_rate', 'is_clean'])
+            writer.writeheader()
+            for col in columns:
+                writer.writerow({
+                            "name": col.name,
+                            "dtype": col.dtype,
+                            "null_rate": col.null_rate,
+                            "is_clean": col.is_clean
+                        })
 
+    columns = [
+        ColumnProfile("id", "int64", 0, 5000),        # null_rate = 0.0    → clean
+        ColumnProfile("revenue", "float64", 3, 5000), # null_rate = 0.0006 → clean
+        ColumnProfile("notes", "object", 500, 5000),  # null_rate = 0.1    → NOT clean
+    ]
+
+    save_report(columns, "report.csv")
+    clean = load_clean_columns("report.csv")
+
+    for row in clean:
+        print(row["name"], row["is_clean"])
 '''
 def save_columns_csv(columns, path: str) -> None:
     fieldnames = ["name", "dtype", "null_rate", "is_clean"]
