@@ -1,7 +1,7 @@
 # Exercise on 
 # Context Manager- The Real Reasson for (with)
 
-'''
+
 class Timer:
     def __init__(self, label):
         self.label = label
@@ -27,6 +27,8 @@ if __name__ == "__main__":
             
     print('done')        
 
+
+# ===================================================================================
 
 import os
 import tempfile
@@ -118,6 +120,8 @@ if __name__ == "__main__":
         print(col)
         
 
+# ===================================================================================
+
 # Exercise 1 — Save and Load a Single Column
 # Goal: Practice the bare minimum. One column → one dict → JSON file → back.
 # Task
@@ -159,7 +163,7 @@ if __name__ == "__main__":
     loaded = load_column("column.json")
     print(loaded)
     print(type(loaded))
- 
+
 # ===============================================================================#  
 
 # JSON Exercise A — Nested Data (Dataset With Columns)
@@ -169,6 +173,7 @@ import json
 import numpy as np
 from dataset import DatasetProfile
 from column import ColumnProfile, CategoricalColumn, NumericColumn
+
 class AgentEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, np.floating):
@@ -216,15 +221,16 @@ if __name__ == "__main__":
     for col in loaded["columns"]:
         print(col)
 
+
+# ===================================================================================
+
 # JSON Exercise B — Save and Load a List of Strings
 #Goal: Practice the simplest possible JSON round-trip — a plain list of strings.
 
 import json    
 
 def save_names(names: list[str], path: str) -> None:
-    list_str = []
-    for name in names:
-        list_str.append(name)
+    list_str = list(names)
     
     with open(path, 'w') as f:
         json.dump(list_str, f, indent=2)
@@ -271,7 +277,11 @@ if __name__ == "__main__":
         ])
 
     total = total_revenue("sales.csv")
-    print(f"Total revenue: {total:.2f}") ''' 
+    print(f"Total revenue: {total:.2f}") 
+
+
+
+# ===================================================================================
 
 # CSV Exercise B — Filtering Columns by Condition
 # Goal: Practice reading CSV and producing a filtered output. 
@@ -310,7 +320,9 @@ if __name__ == "__main__":
 
     for row in clean:
         print(row["name"], row["is_clean"])
-'''
+
+# ===================================================================================
+
 def save_columns_csv(columns, path: str) -> None:
     fieldnames = ["name", "dtype", "null_rate", "is_clean"]
     
@@ -345,4 +357,41 @@ if __name__ == "__main__":
     for row in loaded:
         print(row)
         print(f"  type of null_rate: {type(row['null_rate'])}")
+
+
+# ===================================================================================
 '''
+
+from pathlib import Path
+import csv
+
+if __name__ == "__main__":
+    output = Path("output") / "report"
+    output.mkdir(parents=True, exist_ok=True)
+    
+    csv_path = output / "summary.csv"
+
+    print("Before writing:")
+    print(f"  exists: {csv_path.exists()}")
+    print(f"  suffix: {csv_path.suffix}")
+    print(f"  stem: {csv_path.stem}")
+    print(f"  name: {csv_path.name}")
+    print(f"  parent: {csv_path.parent}")
+
+    with open(csv_path, 'w', newline="") as f:
+        write = csv.DictWriter(f, fieldnames=['name', 'score'])
+        write.writeheader()
+        write.writerows([
+                {"name":'Alice',"score": 95}, 
+                {"name":'Bob',"score": 87}, 
+                {"name":'Charlie',"score": 92},
+                ])
+        
+    print()
+    print("After writing:")
+    print(f"  exists: {csv_path.exists()}")
+
+    print()
+    print("Files in output:")
+    for path in output.glob("*.csv"):
+        print(f"  {path}")

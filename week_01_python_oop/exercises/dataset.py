@@ -1,9 +1,18 @@
 import pandas as pd
-
+import numpy as np
+from pathlib import Path
 try:
     from .column import ColumnProfile, NumericColumn, CategoricalColumn
 except ImportError:  # pragma: no cover - allows direct script execution.
     from column import ColumnProfile, NumericColumn, CategoricalColumn
+
+class AgentEncoder:
+    def default(self, obj):
+        if isinstance(obj, np.floating):
+            return float(obj)
+        if isinstance(obj, np.integer):
+            return int(obj)
+        return super().default(obj)
 
 class DatasetProfile:
 
@@ -89,36 +98,60 @@ class DatasetProfile:
                 return col
         raise KeyError(f"Column {name!r} not found")
     
-def run_demo():
+    def to_json(self, path: Path) -> None:
+        with open(path, 'w') as f:
+            entry = {
+                'name': path.name,
+                'dtype': path.dtype,
+                'null_rate': path.null_rate,
+                'is_clean': path.is_clean
+            }
+            if isinstance(path, CategoricalColumn):
+                entry['cardinality'] = int(path.cardinality)
+            if isinstance(path, NumericColumn):
+                entry['mean'] = float(path.mean)
+                entry['std'] = float(path.std)
+                
+            json.dump(entry, f, indent=2, cls=AgentEncoder)
+            
+    def from_json(cls, path: Path) -> DatasetProfile:
+        with open(path, 'r') as f:
+            return json.load(f)
+        
+    def to_csv(self, path: Path) -> None:
+        with open(quality_report(), 'w', newline="") as f:
+            writer = csv.DictWriter(f)
+            
+            
+if __name__ == "__main__":
+    
+    def run_demo():
     #import pandas as pd
     df = pd.DataFrame({'revenue': [100, 200, None], 'country': ['ET', 'US', 'ET']})
     profile = DatasetProfile.from_dataframe(df)
-    profile.quality_report()                                     
+    profile.quality_report() 
     
-if __name__ == "__main__":
     run_demo()
-    
-    
-'''      
-# Create sample data
-df = pd.DataFrame({
-    'name': ['Alice', 'Bob', None, 'David'],
-    'age': [25, 30, 22, None],
-    'score': [85.5, 92.3, 78.1, 89.7]
-})
+        '''      
+    # Create sample data
+    df = pd.DataFrame({
+        'name': ['Alice', 'Bob', None, 'David'],
+        'age': [25, 30, 22, None],
+        'score': [85.5, 92.3, 78.1, 89.7]
+    })
 
-# Build profile
-profile = DatasetProfile.from_dataframe(df)
+    # Build profile
+    profile = DatasetProfile.from_dataframe(df)
 
-# Print quality report
-profile.quality_report()
+    # Print quality report
+    profile.quality_report()
 
-# Access clean columns
-print("Clean columns:", [col.name for col in profile.clean_columns])
+    # Access clean columns
+    print("Clean columns:", [col.name for col in profile.clean_columns])
 
-# Create single column profile manually
-col = ColumnProfile('age', 'int64', 1, 4)
-print(col)
-print(repr(col))
-print(len(profile))
-print('Alice' in profile) '''
+    # Create single column profile manually
+    col = ColumnProfile('age', 'int64', 1, 4)
+    print(col)
+    print(repr(col))
+    print(len(profile))
+    print('Alice' in profile) '''
