@@ -99,19 +99,20 @@ class DatasetProfile:
         raise KeyError(f"Column {name!r} not found")
     
     def to_json(self, path: Path) -> None:
-        with open(path, 'w') as f:
-            entry = {
-                'name': path.name,
-                'dtype': path.dtype,
-                'null_rate': path.null_rate,
-                'is_clean': path.is_clean
-            }
-            if isinstance(path, CategoricalColumn):
-                entry['cardinality'] = int(path.cardinality)
-            if isinstance(path, NumericColumn):
-                entry['mean'] = float(path.mean)
-                entry['std'] = float(path.std)
-                
+        
+        entry = {
+            'name': path.name,
+            'dtype': path.dtype,
+            'null_rate': path.null_rate,
+            'is_clean': path.is_clean
+        }
+        if isinstance(path, CategoricalColumn):
+            entry['cardinality'] = int(path.cardinality)
+        if isinstance(path, NumericColumn):
+            entry['mean'] = float(path.mean)
+            entry['std'] = float(path.std)
+        
+        with open(path, 'w') as f:                
             json.dump(entry, f, indent=2, cls=AgentEncoder)
             
     def from_json(cls, path: Path) -> DatasetProfile:
@@ -119,20 +120,21 @@ class DatasetProfile:
             return json.load(f)
         
     def to_csv(self, path: Path) -> None:
-        with open(quality_report(), 'w', newline="") as f:
+        with open(path, 'w', newline="") as f:
             writer = csv.DictWriter(f)
             
             
 if __name__ == "__main__":
     
     def run_demo():
-    #import pandas as pd
-    df = pd.DataFrame({'revenue': [100, 200, None], 'country': ['ET', 'US', 'ET']})
-    profile = DatasetProfile.from_dataframe(df)
-    profile.quality_report() 
-    
+        #import pandas as pd
+        df = pd.DataFrame({'revenue': [100, 200, None], 'country': ['ET', 'US', 'ET']})
+        profile = DatasetProfile.from_dataframe(df)
+        profile.quality_report() 
+        profile.to_csv()
+        
     run_demo()
-        '''      
+    '''      
     # Create sample data
     df = pd.DataFrame({
         'name': ['Alice', 'Bob', None, 'David'],
