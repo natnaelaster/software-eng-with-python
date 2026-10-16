@@ -6,7 +6,7 @@ try:
 except ImportError:  # pragma: no cover - allows direct script execution.
     from column import ColumnProfile, NumericColumn, CategoricalColumn
 
-class AgentEncoder:
+class AgentEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, np.floating):
             return float(obj)
@@ -99,30 +99,37 @@ class DatasetProfile:
         raise KeyError(f"Column {name!r} not found")
     
     def to_json(self, path: Path) -> None:
-        
-        entry = {
-            'name': path.name,
-            'dtype': path.dtype,
-            'null_rate': path.null_rate,
-            'is_clean': path.is_clean
-        }
+        entries = []
+        for col in self    
+            entry = {
+                'name': col.name,
+                'dtype': col.dtype,
+                'null_rate': col.null_rate,
+                'is_clean': col.is_clean,
+                'type': col.__class__.__name__
+            }
         if isinstance(path, CategoricalColumn):
-            entry['cardinality'] = int(path.cardinality)
+            entry['cardinality'] = int(self.cardinality)
         if isinstance(path, NumericColumn):
-            entry['mean'] = float(path.mean)
-            entry['std'] = float(path.std)
-        
-        with open(path, 'w') as f:                
-            json.dump(entry, f, indent=2, cls=AgentEncoder)
+            entry['mean'] = float(self.mean)
+            entry['std'] = float(self.std)
             
+        entries.append(entry)
+            
+        with open(path, 'w') as f:                
+            json.dump(entries, f, indent=2, cls=AgentEncoder)
+    
+    @classmethod        
     def from_json(cls, path: Path) -> DatasetProfile:
-        with open(path, 'r') as f:
+        with open(path, 'r') as f: 
             return json.load(f)
         
     def to_csv(self, path: Path) -> None:
         with open(path, 'w', newline="") as f:
-            writer = csv.DictWriter(f)
-            
+            for writer in self:
+                writer = csv.DictWriter(f, fieldnames=['name', 'dtype', 'null_rate', 'is_clean', 'type'])
+                writer.writeheader()
+                writer.writerows()
             
 if __name__ == "__main__":
     
