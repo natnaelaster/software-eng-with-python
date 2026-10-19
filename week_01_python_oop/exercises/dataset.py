@@ -1,11 +1,11 @@
 import pandas as pd
 import numpy as np
+import json
+import csv
 from pathlib import Path
-try:
-    from .column import ColumnProfile, NumericColumn, CategoricalColumn
-except ImportError:  # pragma: no cover - allows direct script execution.
-    from column import ColumnProfile, NumericColumn, CategoricalColumn
+from .column import ColumnProfile, NumericColumn, CategoricalColumn
 
+# New Class
 class AgentEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, np.floating):
@@ -99,37 +99,56 @@ class DatasetProfile:
         raise KeyError(f"Column {name!r} not found")
     
     def to_json(self, path: Path) -> None:
+        """Write the profile as a JSON file."""
         entries = []
-        for col in self    
+        for col in self:
             entry = {
                 'name': col.name,
                 'dtype': col.dtype,
-                'null_rate': col.null_rate,
-                'is_clean': col.is_clean,
-                'type': col.__class__.__name__
-            }
-        if isinstance(path, CategoricalColumn):
-            entry['cardinality'] = int(self.cardinality)
-        if isinstance(path, NumericColumn):
-            entry['mean'] = float(self.mean)
-            entry['std'] = float(self.std)
+                'null_count': col.null_count,
+                'total_count': col.total_count,
+                'null_rate': float(col.null_rate),
+                'is_clean': bool(col.is_clean),
+                'type': col.__class__.__name__,
+            }        
+            entries.append(entry)
             
-        entries.append(entry)
-            
-        with open(path, 'w') as f:                
+        with open(path, 'w') as f:
             json.dump(entries, f, indent=2, cls=AgentEncoder)
     
-    @classmethod        
-    def from_json(cls, path: Path) -> DatasetProfile:
-        with open(path, 'r') as f: 
-            return json.load(f)
+    @classmethod      
+    def from_json(cls, path: Path) -> "DatasetProfile":
+        """Build a DatasetProfile from a JSON file."""
+        with open(path, 'r') as f:
+            entries = json.load(f)
         
+        profile = cls() 
+        for entry in entries:
+            col = ColumnProfile(
+                entry['name'],
+                entry['dtype'],
+                null_count = entry['null_count'],
+                total_count = entry['total_count'],
+            )
+            profile.add_column(col)
+        
+        return profile
+    
     def to_csv(self, path: Path) -> None:
-        with open(path, 'w', newline="") as f:
-            for writer in self:
-                writer = csv.DictWriter(f, fieldnames=['name', 'dtype', 'null_rate', 'is_clean', 'type'])
-                writer.writeheader()
-                writer.writerows()
+        """Write the profile as a CSV quality report."""
+        fieldnames = ["name", "dtype", "null_rate", "is_clean", "type"]
+        
+        with open(path, 'r') as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            for col in self:
+                writer.writerow({
+                    'name': col.name,
+                    'dtype': col.dtype,
+                    'null_rate': col.null_rate,
+                    'is_clean': col.is_clean,
+                    'type': col.__class__.__name__,
+                })     
             
 if __name__ == "__main__":
     
@@ -137,11 +156,16 @@ if __name__ == "__main__":
         #import pandas as pd
         df = pd.DataFrame({'revenue': [100, 200, None], 'country': ['ET', 'US', 'ET']})
         profile = DatasetProfile.from_dataframe(df)
-        profile.quality_report() 
-        profile.to_csv()
-        
+        profile.quality_report()         
+        #col = DatasetProfile("revenue", "float64", 3, 5000)
+        profile.to_json(profile, "to_json.json")
+
+        loaded = from_json("to_json.json")
+        print(loaded)
+        print(type(loaded))
+    '''  
     run_demo()
-    '''      
+       
     # Create sample data
     df = pd.DataFrame({
         'name': ['Alice', 'Bob', None, 'David'],
@@ -157,10 +181,18 @@ if __name__ == "__main__":
 
     # Access clean columns
     print("Clean columns:", [col.name for col in profile.clean_columns])
-
+    
     # Create single column profile manually
     col = ColumnProfile('age', 'int64', 1, 4)
     print(col)
     print(repr(col))
     print(len(profile))
-    print('Alice' in profile) '''
+    print('Alice' in profile) 
+    print(to_json(col))'''
+    
+    #from data_agent.profiler import ColumnProfile
+
+    profile = DatasetProfile.from_json("profile.json")
+    print(len(profile))
+    for col in profile:
+        print(col.name)

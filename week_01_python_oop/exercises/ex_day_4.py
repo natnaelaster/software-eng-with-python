@@ -295,7 +295,7 @@ def load_clean_columns(path: str) -> list[dict]:
         return [row for row in reader if row["is_clean"] == "True"]
             
 if __name__ == "__main__":
-    from column import ColumnProfile
+    #from column import ColumnProfile
     
     def save_report(columns: list[ColumnProfile], path: str)  -> None:
         with open(path, 'w', newline="") as f:
