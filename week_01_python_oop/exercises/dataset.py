@@ -3,7 +3,7 @@ import numpy as np
 import json
 import csv
 from pathlib import Path
-from .column import ColumnProfile, NumericColumn, CategoricalColumn
+from column import ColumnProfile, NumericColumn, CategoricalColumn
 
 # New Class
 class AgentEncoder(json.JSONEncoder):
@@ -127,8 +127,8 @@ class DatasetProfile:
             col = ColumnProfile(
                 entry['name'],
                 entry['dtype'],
-                null_count = entry['null_count'],
-                total_count = entry['total_count'],
+                null_count=0,
+                total_count=1,
             )
             profile.add_column(col)
         
@@ -141,6 +141,7 @@ class DatasetProfile:
         with open(path, 'r') as f:
             writer = csv.DictWriter(f, fieldnames=fieldnames)
             writer.writeheader()
+            
             for col in self:
                 writer.writerow({
                     'name': col.name,
@@ -151,21 +152,9 @@ class DatasetProfile:
                 })     
             
 if __name__ == "__main__":
-    
-    def run_demo():
-        #import pandas as pd
-        df = pd.DataFrame({'revenue': [100, 200, None], 'country': ['ET', 'US', 'ET']})
-        profile = DatasetProfile.from_dataframe(df)
-        profile.quality_report()         
-        #col = DatasetProfile("revenue", "float64", 3, 5000)
-        profile.to_json(profile, "to_json.json")
-
-        loaded = from_json("to_json.json")
-        print(loaded)
-        print(type(loaded))
-    '''  
+    '''
     run_demo()
-       
+    
     # Create sample data
     df = pd.DataFrame({
         'name': ['Alice', 'Bob', None, 'David'],
@@ -188,11 +177,22 @@ if __name__ == "__main__":
     print(repr(col))
     print(len(profile))
     print('Alice' in profile) 
-    print(to_json(col))'''
+    print(to_json(col))
     
     #from data_agent.profiler import ColumnProfile
+'''
+    # testing to_json function  
+    profile = DatasetProfile()
+    profile.add_column(ColumnProfile("id", "int64", 0, 5000))
+    profile.add_column(NumericColumn("revenue", "float64", 3, 5000, 1420.5, 340.2))
 
-    profile = DatasetProfile.from_json("profile.json")
-    print(len(profile))
-    for col in profile:
-        print(col.name)
+    profile.to_json(Path("test.json"))
+        
+    # testing from_json function
+    loaded = DatasetProfile.from_json("test.json")
+    print(len(loaded))
+    for col in loaded:
+        print(col.name, col.__class__.__name__) 
+        
+    # testing to_csv function
+    loaded.to_csv(Path("test.csv"))
