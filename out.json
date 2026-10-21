@@ -1,0 +1,20 @@
+[
+  {
+    "name": "id",
+    "dtype": "int64",
+    "null_count": 0,
+    "total_count": 5000,
+    "null_rate": 0.0,
+    "is_clean": true,
+    "type": "ColumnProfile"
+  },
+  {
+    "name": "revenue",
+    "dtype": "float64",
+    "null_count": 3,
+    "total_count": 5000,
+    "null_rate": 0.0006,
+    "is_clean": true,
+    "type": "ColumnProfile"
+  }
+]

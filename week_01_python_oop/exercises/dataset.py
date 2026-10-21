@@ -138,7 +138,7 @@ class DatasetProfile:
         """Write the profile as a CSV quality report."""
         fieldnames = ["name", "dtype", "null_rate", "is_clean", "type"]
         
-        with open(path, 'r') as f:
+        with open(path, 'w') as f:
             writer = csv.DictWriter(f, fieldnames=fieldnames)
             writer.writeheader()
             
@@ -180,7 +180,7 @@ if __name__ == "__main__":
     print(to_json(col))
     
     #from data_agent.profiler import ColumnProfile
-'''
+
     # testing to_json function  
     profile = DatasetProfile()
     profile.add_column(ColumnProfile("id", "int64", 0, 5000))
@@ -195,4 +195,24 @@ if __name__ == "__main__":
         print(col.name, col.__class__.__name__) 
         
     # testing to_csv function
-    loaded.to_csv(Path("test.csv"))
+    loaded.to_csv(Path("test.csv"))'''
+        
+
+    # Build a profile with two columns
+    profile = DatasetProfile()
+    profile.add_column(ColumnProfile("id", "int64", 0, 5000))
+    profile.add_column(ColumnProfile("revenue", "float64", 3, 5000))
+
+    # Save it
+    profile.to_json(Path("out.json"))
+    profile.to_csv(Path("out.csv"))
+
+    # Add a third column AFTER saving
+    profile.add_column(ColumnProfile("country", "object", 12, 5000))
+
+    # Load the JSON back
+    loaded = DatasetProfile.from_json(Path("out.json"))
+
+    # How many columns are in each?
+    print(f"Original profile: {len(profile)}")     # 3
+    print(f"Loaded profile: {len(loaded)}")        # 2

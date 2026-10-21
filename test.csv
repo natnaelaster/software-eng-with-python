@@ -1,0 +1,3 @@
+name,dtype,null_rate,is_clean,type
+id,int64,0.0,True,ColumnProfile
+revenue,float64,0.0,True,ColumnProfile
