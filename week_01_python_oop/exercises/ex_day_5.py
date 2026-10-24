@@ -5,8 +5,7 @@
 '''
 import json
 
-#exeptions
-# 1
+# 1 exeptions
 try:
     x = int("hello")
 except ValueError as e:
@@ -15,7 +14,8 @@ except ValueError as e:
  
 print('='* 50)   
  
-# 2
+# 2 try/except - catching example
+
 def safe_load_json(filepath: str) -> dict:
     try:
         with open(filepath, 'r') as f:
@@ -46,7 +46,7 @@ if __name__ == '__main__':
     result = safe_load_json("good.json")
     print(f"Result: {result}")'''
 
-# 3
+# 3 the exception hierarchy — why it matters
 '''Write a function called parse_age(raw: str) -> int 
 that converts a string to an age. 
 Then write a function process_ages(ages: list[str]) -> list[int] 
