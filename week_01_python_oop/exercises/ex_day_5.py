@@ -2,7 +2,7 @@
 # Error Handling
 # Costome exeptions
 # Defensive programing
-
+'''
 import json
 
 #exeptions
@@ -44,4 +44,36 @@ if __name__ == '__main__':
     with open("good.json", "w") as f:
         f.write('{"name": "test", "value": 42}')
     result = safe_load_json("good.json")
-    print(f"Result: {result}")
+    print(f"Result: {result}")'''
+
+# 3
+'''Write a function called parse_age(raw: str) -> int 
+that converts a string to an age. 
+Then write a function process_ages(ages: list[str]) -> list[int] 
+that calls parse_age on each string.'''
+
+def parse_age(raw: str) -> int:
+    if raw.startswith('-') and raw[1:].isdigit():
+        raise ValueError (f"age can not be negative: {raw!r}")
+    if not raw.isdigit():
+        raise ValueError (f"invalid age format: {raw!r}")
+    age = int(raw)
+    if age > 150:
+        raise ValueError(f"you should be dead with {raw!r} of age")
+    return age
+def process_ages(ages: list[str]) -> list[int]:
+    valid_ages = []
+    for raw_age in ages:
+        try:
+            parse = parse_age(raw_age)
+            valid_ages.append(parse)
+        except ValueError as e:
+            print (f"skipped entry {e}")
+    
+    return valid_ages
+        
+if __name__ == '__main__':
+    raw_ages = ['25', 'abc', '42', '200', '0', '-3']
+    valid_ages = process_ages(raw_ages)
+    print(f'Valid ages: {valid_ages}')
+    
