@@ -2,14 +2,25 @@ import pandas as pd
 
 CLEAN_THERSHOLD = 0.05
 
-class ColumnProfile:
 
+# custome class for raising exceptions.
+class DataAgentError(Exception):
+    # Base for all errors in the data_agent package.
+    pass
+class ProfilerError(DataAgentError):
+    # Raise when for profile related failures.
+    pass
+class InvalidColumnError(ProfilerError):
+    # raise when for column validation failures.
+    pass
+class ColumnProfile:
     def __init__(self, name: str, dtype: str, null_count: int, total_count:int):
-        
+        if not isinstance(name, str) and name.strip():
+            raise InvalidColumnError(f"name must be non empity string,got{name!r}")
         if null_count < 0:
-            raise ValueError(f"null_count must be >= 0, got {null_count}")
+            raise InvalidColumnError(f"null_count must be >= 0, got {null_count}")
         if null_count > total_count:
-            raise ValueError(f"null_count ({null_count}) cannot exceed total_count ({total_count})")
+            raise InvalidColumnError(f"null_count ({null_count}) cannot exceed total_count ({total_count})")
 
         self.name = name
         self.dtype = dtype

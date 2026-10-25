@@ -5,7 +5,7 @@ import csv
 from pathlib import Path
 from column import ColumnProfile, NumericColumn, CategoricalColumn
 
-# New Class
+# New Class for serializing numpy data type for json
 class AgentEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, np.floating):
@@ -13,7 +13,6 @@ class AgentEncoder(json.JSONEncoder):
         if isinstance(obj, np.integer):
             return int(obj)
         return super().default(obj)
-
 class DatasetProfile:
 
     def __init__(self):

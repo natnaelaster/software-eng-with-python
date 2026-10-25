@@ -77,3 +77,12 @@ if __name__ == '__main__':
     valid_ages = process_ages(raw_ages)
     print(f'Valid ages: {valid_ages}')
     
+    
+class DataAgentError(Exception):
+    # Base for all errors in the data_agent package.
+    pass
+class ProfilerError(DataAgentError):
+    # Raise for when a column fails validation.
+    pass
+class InvalidColumnError(ProfilerError):
+    pass
