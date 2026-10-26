@@ -1,27 +1,28 @@
 import pandas as pd
 
-CLEAN_THERSHOLD = 0.05
+#CLEAN_THERSHOLD = 0.05
 
 
 # custome class for raising exceptions.
 class DataAgentError(Exception):
-    # Base for all errors in the data_agent package.
+    """Base for all errors in the data_agent package."""
     pass
 class ProfilerError(DataAgentError):
-    # Raise when for profile related failures.
+    """Raised when profile-related failures occur."""
     pass
 class InvalidColumnError(ProfilerError):
-    # raise when for column validation failures.
+    """Raised when column validation fails."""
     pass
 class ColumnProfile:
     def __init__(self, name: str, dtype: str, null_count: int, total_count:int):
-        if not isinstance(name, str) and name.strip():
-            raise InvalidColumnError(f"name must be non empity string,got{name!r}")
+        if not isinstance(name, str) or not name.strip():
+            raise InvalidColumnError(f"name must be non-empty string, got {name!r}")
+        if total_count <= 0:
+            raise InvalidColumnError(f"total_count must be > 0, got {total_count}")
         if null_count < 0:
             raise InvalidColumnError(f"null_count must be >= 0, got {null_count}")
         if null_count > total_count:
             raise InvalidColumnError(f"null_count ({null_count}) cannot exceed total_count ({total_count})")
-
         self.name = name
         self.dtype = dtype
         self.null_count = null_count
@@ -81,10 +82,10 @@ class CategoricalColumn(ColumnProfile):
         return f"{self.name} [{self.dtype}] — {self.null_rate:.1%} null | cardinality = {self.cardinality}"       
     
 if __name__ == "__main__":
-    
-    columns = ColumnProfile('data', 'int64', 0, 50)
-    category = CategoricalColumn('cat', 'str', 7, 40, 4)
-    numeric = NumericColumn('num', 'float', 5, 200, 3, 5)
-    
-    print(columns.summary())
-    print(category.null_rate())
+    # test code for custome exceptions. 
+    try:
+        profile = ColumnProfile('data', 'int64', -3, 40)
+        print(profile.summary())
+    except ProfilerError as e:
+        print(f'caught through ProfilerError: {e}')
+        
