@@ -12,7 +12,7 @@ class ProfilerError(DataAgentError):
     pass
 class InvalidColumnError(ProfilerError):
     """Raised when column validation fails."""
-    def __init__(self, message, column_name: str, bad_value: str):
+    def __init__(self, message: str, column_name: str, bad_value=None ):
         super().__init__(message)
         self.column_name = column_name
         self.bad_value = bad_value   
@@ -22,19 +22,30 @@ class InvalidColumnError(ProfilerError):
         
 class ColumnProfile:
     def __init__(self, name: str, dtype: str, null_count: int, total_count:int):
-        if not isinstance(name, str) or not name.split():
+        if not isinstance(name, str) or not name.strip():
             raise InvalidColumnError(
                 "name must be a non-empty string",
-                column_name = name
-                bad_value = name
+                column_name=name,
+                bad_value=name,
             )
-        if total_count < 0:
+        if total_count <= 0:
             raise InvalidColumnError(
                 "total_count must be > 0",
-                column_name = name
-                bad_value = total_count
-        
-            
+                column_name=name,
+                bad_value=total_count,
+            )
+        if null_count < 0:
+            raise InvalidColumnError(
+                "null_count must be >= 0",
+                column_name=name,
+                bad_value=null_count,
+            )
+        if null_count > total_count:
+            raise InvalidColumnError(
+                "null_count cannot exceed total_count",
+                column_name=name,
+                bad_value=null_count,
+            )    
         self.name = name
         self.dtype = dtype
         self.null_count = null_count
@@ -96,13 +107,11 @@ class CategoricalColumn(ColumnProfile):
 if __name__ == "__main__":
     # test code for custome exceptions. 
     try:
-        profile = ColumnProfile('hulu', 'int64', 53, 40)
+        profile = ColumnProfile('hulu', 'int64', 5, -40)
         print(profile.summary())
     except ProfilerError as e:
         #print(f'caught through ProfilerError: {e}')
         print(str(e))
-        print(f'name = {e.name}')
-        print(f'dtype = {e.dtype}')
-        print(f'null_count = {e.null_count}')
-        print(f'total_count = {e.total_count}')
+        print(f'column_name = {e.column_name}')
+        print(f'bad_value = {e.bad_value}')
         
