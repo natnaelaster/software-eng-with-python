@@ -194,7 +194,7 @@ if __name__ == "__main__":
         print(col.name, col.__class__.__name__) 
         
     # testing to_csv function
-    loaded.to_csv(Path("test.csv"))'''
+    loaded.to_csv(Path("test.csv"))
         
 
     # Build a profile with two columns
@@ -215,3 +215,28 @@ if __name__ == "__main__":
     # How many columns are in each?
     print(f"Original profile: {len(profile)}")     # 3
     print(f"Loaded profile: {len(loaded)}")        # 2
+    
+    <h6>
+    <b> Try it yourself — 7 </b>
+
+    Using the <b>DatasetProfile</b> you already built, write a comprehension that produces 
+    a list of <b>(name, null_rate)</b> tuples for every column whose <b>null_rate</b> is above 0.
+
+    Expected output format (the actual values depend on your profile):
+
+    [('revenue', 0.02), ('country', 0.0024)]
+
+    <b>Hint:</b> iterate over <b>profile</b> (which is iterable thanks to <b>__iter__</b>). 
+    For each <b>col</b>, check <b>col.null_rate > 0</b>. If so, include the tuple 
+    <b>(col.name, col.null_rate)</b>.
+
+    <b>What to notice:</b> the comprehension creates a tuple for each qualifying column — <b>(col.name, col.null_rate)</b>. This is how you extract structured data from a collection in one expression.
+    </h6> '''
+    
+    profile = DatasetProfile()
+    profile.add_column(ColumnProfile("id", "int64", 5, 5000))
+    profile.add_column(ColumnProfile("revenue", "float64", 3, 5000))
+        
+    pro_list = [(col.name, col.null_rate) for col in profile if col.null_rate > 0]
+    print(pro_list)
+    
