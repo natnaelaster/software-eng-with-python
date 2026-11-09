@@ -238,5 +238,10 @@ if __name__ == "__main__":
     profile.add_column(ColumnProfile("revenue", "float64", 3, 5000))
         
     pro_list = [(col.name, col.null_rate) for col in profile if col.null_rate > 0]
-    print(pro_list)
+    print(pro_list) 
+    
+    
+    
+    
+    
     
