@@ -86,3 +86,33 @@ class ProfilerError(DataAgentError):
     pass
 class InvalidColumnError(ProfilerError):
     pass
+
+
+class GrowableList:
+    def __init__(self):
+        self._data = []
+        self._capacity = 0
+        self._size = 0
+
+    def append(self, x):
+        if self._size == self._capacity:
+            new_capacity = 1 if self._capacity == 0 else self._capacity * 2
+
+            # Allocate the new backing slots and copy existing elements into it.
+            new_data = [None] * new_capacity
+            for i in range(self._size):
+                value = self._data[i]
+                new_data[i] = value
+
+            self._data = new_data
+            self._capacity = new_capacity
+
+        # Store the element in the next available slot.
+        self._data[self._size] = x
+        self._size += 1
+
+    def capacity(self):
+        return self._capacity
+
+    def __len__(self):
+        return self._size
